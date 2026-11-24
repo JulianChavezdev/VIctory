@@ -1,7 +1,7 @@
-//! Everything specific to the title: its container formats, build
-//! identities, and the hooks we place in its code (located by per-build
-//! offsets or byte-pattern signatures). What may and may not be stored here
-//! is defined in docs/asset-policy.md.
+//! Everything specific to the title: its container formats and build
+//! identities. The compatibility hooks placed in its code live in
+//! `victory-loader` (`hooks.rs`). What may and may not be stored here is
+//! defined in docs/asset-policy.md.
 
 pub mod sgd5;
 

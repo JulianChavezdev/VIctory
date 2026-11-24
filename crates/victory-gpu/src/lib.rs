@@ -12,8 +12,8 @@
 //! descriptor heaps, [`root`] root signatures, [`query`] query heaps,
 //! [`signature`] command signatures, [`pipeline`] pipeline states,
 //! [`frame`] frame pacing, [`object`] what all console graphics objects
-//! share, [`console`] which console model the title sees. Planned:
-//! `present` (swap chain).
+//! share, [`console`] which console model the title sees. Presentation
+//! (the host swap chain) is in `host`.
 
 // Off Windows there is no host GPU: only the portable parts are built (for
 // their tests), and the paths that feed the host go unused.

@@ -40,7 +40,7 @@ O que cada parte faz hoje e o que ainda falta:
 | Rede | Offline por projeto: o jogo não consegue acessar a rede | – |
 | Arquivos e streaming | Leitura de arquivos compactados e dados em streaming, decodificação zlib e BCPack em paralelo | O carregamento é limitado pelas escritas na memória do jogo |
 | Entrada | Controles XInput, teclado, teclado simulando controle | Vibração dos gatilhos |
-| Áudio | Som de menu, vídeo e carregamento; vozes XMA e streams Opus decodificam | O reverb está mudo; resultados do Opus não conferidos com o jogo |
+| Áudio | Som de menu, vídeo e carregamento; vozes XMA e streams Opus decodificam; reverb (convolução do DSP) funciona | Os streams FFT e IFFT do DSP estão mudos; resultados do Opus não conferidos com o jogo |
 | GPU: menus | Draws, compute e apresentação no D3D12 do host; só a memória do jogo que mudou é copiada | O ritmo dos quadros oscila em uma tela nos builds de release |
 | GPU: mundo | Pipelines de mesh, buffers escritos por shaders, tempo de vida de descritores, execução indireta (argumentos limitados), pipelines criados por threads de trabalho e guardados em disco | A maior parte da cena ainda falta (shaders não traduzidos descartam draws); quadros levam segundos; faltam queries reais, depth bounds, HDR e escala |
 | Shaders | Código de GPU do console recompilado para DXIL no primeiro uso, em cache no disco. Menus: todos. Mundo: mesh 8.191 de 8.506, vertex/pixel 10.617 de 12.346, compute 1.643 de 2.539 | Atomics de imagem de 64 bits, estágios de geometria mesclados, os shaders do construtor de ray tracing; alguns programas de compute precisam de GPU com waves de 64 lanes |
@@ -134,6 +134,10 @@ cargo build --profile diag -p victory --features diagnostics   # target\diag\vic
 | `VICTORY_SHADER_LOOP_LIMIT=<n>` | loops de shaders traduzidos param após `n` iterações por lane em vez de 2^20 (com entradas próprias no cache de shaders); se um `n` menor deixar os quadros do mundo bem mais rápidos, são os loops que atingem o limite que causam a lentidão |
 | `VICTORY_AUDIO_CAPTURE=<arquivo.wav>` | grava o que o jogo toca (só o nosso processo) |
 | `VICTORY_XMA_DUMP=<dir>` | salva o contexto e a entrada das primeiras 32 vozes XMA |
+| `VICTORY_COPY_MODE=plain` | as cópias de memória do jogo em cada envio rodam sem a proteção de páginas mapeadas; `none` as pula (só para medir tempos; builds de diagnóstico) |
+| `VICTORY_PAD_LOG` (qualquer valor) | registra cada mudança nos botões de um controle DualSense |
+| `VICTORY_NO_WATCHDOG` (qualquer valor) | na build conhecida Series X 1.0.2.1, impede que o watchdog do jogo encerre o processo quando a thread principal trava |
+| `VICTORY_SKIP_CPU_CHECK=1` | roda numa CPU sem AVX2 (por exemplo sob um emulador como o Intel SDE) em vez de recusar iniciar |
 
 Todo build acrescenta crashes e falhas de GPU do host ao `crashes.log` na
 pasta de dados do jogo.

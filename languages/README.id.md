@@ -31,7 +31,7 @@ Apa yang dikerjakan setiap bagian saat ini dan apa yang masih dibutuhkan:
 | Network | Offline by design: game tidak bisa mengakses jaringan | – |
 | File dan streaming | Arsip dan data streaming terbaca, zlib dan BCPack didekode secara paralel | Loading dibatasi oleh penulisan ke memori game |
 | Input | XInput pad, keyboard, keyboard sebagai pengganti pad | Trigger rumble |
-| Audio | Suara menu, video, dan loading; XMA voices dan Opus stream terdekode | Reverb masih bisu; hasil Opus belum diverifikasi terhadap game |
+| Audio | Suara menu, video, dan loading; XMA voices dan Opus stream terdekode; reverb (konvolusi DSP) berfungsi | Stream FFT dan IFFT DSP masih bisu; hasil Opus belum diverifikasi terhadap game |
 | GPU: menu | Draw, compute, dan presentasi di host D3D12; hanya memori game yang berubah yang disalin | Frame pacing drift di satu layar pada release build |
 | GPU: dunia | Mesh pipeline, shader-written buffer, descriptor lifetime, indirect execution (argumen di-clamp), pipeline yang dibuat oleh worker thread dan disimpan ke disk | Sebagian besar scene masih hilang (shader yang belum diterjemahkan menggugurkan draw); frame memakan waktu detik-an; real query, depth bounds, HDR, dan scaling belum ada |
 | Shader | Kode GPU konsol dikompilasi ulang ke DXIL saat pertama dipakai, disimpan di cache disk. Menu: semua. Dunia: mesh 8.191 dari 8.506, vertex/pixel 10.617 dari 12.346, compute 1.643 dari 2.539 | 64-bit image atomic, merged geometry stage, shader untuk ray-tracing builder; beberapa program compute memerlukan GPU dengan 64-lane wave |
@@ -112,6 +112,10 @@ cargo build --profile diag -p victory --features diagnostics   # target\diag\vic
 | `VICTORY_SHADER_LOOP_LIMIT=<n>` | loop shader yang sudah diterjemahkan berhenti setelah `n` iterasi per lane, bukan 2^20 (entri cache shader tersendiri); jika `n` yang lebih kecil membuat frame dunia jauh lebih cepat, berarti loop yang mencapai batas tersebut yang membuatnya lambat |
 | `VICTORY_AUDIO_CAPTURE=<file.wav>` | merekam audio yang diputar game (proses kita saja) |
 | `VICTORY_XMA_DUMP=<dir>` | menyimpan konteks dan input dari 32 XMA voice pertama |
+| `VICTORY_COPY_MODE=plain` | salinan memori game pada setiap submission berjalan tanpa pelindung halaman yang dipetakan; `none` melewatinya (hanya untuk pengukuran waktu; build diagnostik) |
+| `VICTORY_PAD_LOG` (nilai apa pun) | mencatat setiap perubahan tombol pada pad DualSense |
+| `VICTORY_NO_WATCHDOG` (nilai apa pun) | pada build Series X 1.0.2.1 yang dikenal, mencegah watchdog game mengakhiri proses saat thread utamanya macet |
+| `VICTORY_SKIP_CPU_CHECK=1` | berjalan di CPU tanpa AVX2 (misalnya di bawah emulator seperti Intel SDE) alih-alih menolak untuk mulai |
 
 Setiap build menambahkan crash dan kegagalan GPU host ke `crashes.log` di folder data game.
 

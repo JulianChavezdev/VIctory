@@ -33,6 +33,11 @@ test fails on one driver and you want to know whether it is the driver. WARP
 is not a real GPU, so behaviour that depends on the hardware (wave size,
 driver quirks) is only settled by a run on that hardware.
 
+`VICTORY_SAVE_STOP=<n>` is internal to the save tests: the crash test
+`a_kill_at_any_step_leaves_old_or_new` in `victory-hle` sets it on a child
+copy of the test binary, which stops for good at the `n`th write step and is
+then killed. Leave it unset otherwise.
+
 Run one crate or one test on its own:
 
 ```powershell

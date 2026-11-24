@@ -1,6 +1,6 @@
 # VIctory
 
-*Read this in: [English](README.md) | [Bahasa Indonesia](languages/README.id.md)*
+*Read this in: [English](README.md) | [Português (Brasil)](README.pt-BR.md) | [Bahasa Indonesia](languages/README.id.md)*
 
 Runs an Xbox Series X|S title natively on Windows, from files
 the user supplies.
@@ -52,7 +52,7 @@ What each part does today and what it still needs:
 | Network | Offline by design: the title cannot reach the network | – |
 | Files and streaming | Archives and streamed data read, zlib and BCPack decoded in parallel | Loading is limited by writes into title memory |
 | Input | XInput pads, keyboard, keyboard stand-in pad | Trigger rumble |
-| Audio | Menu, video and loading sound; XMA voices and Opus streams decode | Reverb is silent; Opus results unverified against the title |
+| Audio | Menu, video and loading sound; XMA voices and Opus streams decode; reverb (the DSP's convolution) is wet | The DSP's FFT and IFFT streams are silent; Opus results unverified against the title |
 | GPU: menus | Draws, compute and presentation on host D3D12; only changed title memory is copied | Frame pacing drifts on one screen in release builds |
 | GPU: world | Mesh pipelines, shader-written buffers, descriptor lifetimes, indirect execution (arguments clamped), pipelines made by worker threads and kept on disk | Most of the scene is still missing (untranslated shaders drop draws); frames take seconds; real queries, depth bounds, HDR and scaling are missing |
 | Shaders | Console GPU code recompiled to DXIL at first use, cached on disk. Menus: all. World: mesh 8,191 of 8,506, vertex/pixel 10,617 of 12,346, compute 1,643 of 2,539 | Merged geometry stages, the ray-tracing builder's shaders; some compute programs need a GPU with 64-lane waves |
@@ -233,6 +233,10 @@ The on/off switches below (`...=1`) are off when unset or set to `0`.
 | `VICTORY_ALIAS_COPY=0` | views the title places in the memory of a texture the host writes are filled from title memory again instead of copied from that texture on the host |
 | `VICTORY_AUDIO_CAPTURE=<file.wav>` | records what the title plays (our process only) |
 | `VICTORY_XMA_DUMP=<dir>` | saves the first 32 XMA voices' context and input |
+| `VICTORY_COPY_MODE=plain` | submission copies of title memory run without the mapped-page guard; `none` skips them (for timing only; diagnostics builds) |
+| `VICTORY_PAD_LOG` (any value) | logs each change of a DualSense pad's buttons |
+| `VICTORY_NO_WATCHDOG` (any value) | on the known Series X 1.0.2.1 build, stops the title's watchdog from ending the process when its main thread stalls |
+| `VICTORY_SKIP_CPU_CHECK=1` | runs on a CPU without AVX2 (for example under an emulator such as Intel SDE) instead of refusing to start |
 
 Every build appends unhandled exceptions, panics, and host GPU failures to
 `crashes.log` in the title's data folder.
