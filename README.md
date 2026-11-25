@@ -120,6 +120,30 @@ title's window has focus:
 | F / H | stick clicks |
 | Esc, Tab | Menu, View |
 
+## Working on Linux
+
+The title runs on Windows only, but the portable crates build and test on
+Linux too:
+
+```sh
+cargo test --locked -p victory-core -p victory-pe -p victory-formats \
+  -p victory-shader -p victory-pipeline -p victory-game -p xtask
+```
+
+`victory-gpu`, `victory-hle`, `victory-loader` and `apps/victory` need the
+Windows host and are left out. The Windows code can still be checked from
+Linux with LLVM's `clang-cl` and `llvm-lib` for the C parts of the
+dependencies (on Debian and Ubuntu the first is `clang-cl-18` or similar):
+
+```sh
+CC_x86_64_pc_windows_msvc=clang-cl AR_x86_64_pc_windows_msvc=llvm-lib \
+  cargo clippy --workspace --all-targets --locked \
+  --target x86_64-pc-windows-msvc -- -D warnings
+```
+
+The `x86_64-pc-windows-msvc` target is already listed in
+`rust-toolchain.toml`. Nothing on Linux runs the title or its shaders.
+
 ## Commands
 
 ```
